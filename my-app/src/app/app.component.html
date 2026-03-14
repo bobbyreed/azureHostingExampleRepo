@@ -226,7 +226,24 @@
         </defs>
       </svg>
       <h1>Hello, {{ title }}</h1>
-      <p>Congratulations! Your app is running. 🎉</p>
+      <div class="description">
+        import { Component } from '@angular/core';
+
+        @Component({
+          selector: 'app-user',
+          templateUrl: ' Username: {{ username }}',
+        })
+
+        export class User {
+          username = 'this guy';
+        }
+
+        @Component({
+          selector: 'app-root',
+          template: ``,
+          imports: [],
+        })
+        export class App {}
     </div>
     <div class="divider" role="separator" aria-label="Divider"></div>
     <div class="right-side">

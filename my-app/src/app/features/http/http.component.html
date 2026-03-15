@@ -1,0 +1,77 @@
+<div class="feature-page">
+  <div class="feature-header">
+    <h1>🌐 HTTP Client</h1>
+    <p>Fetch and send data to APIs with HttpClient, loading states, and error handling</p>
+  </div>
+
+  <div class="feature-section">
+    <h2>About This Feature</h2>
+    <p>
+      Angular's <code>HttpClient</code> service provides typed HTTP requests that return
+      <strong>Observables</strong>. It's provided via <code>provideHttpClient()</code> in
+      <code>app.config.ts</code>. Use <code>withFetch()</code> for SSR-compatible fetch-based requests.
+    </p>
+    <ul>
+      <li><code>http.get&lt;T&gt;(url)</code> — retrieve data</li>
+      <li><code>http.post&lt;T&gt;(url, body)</code> — create data</li>
+      <li><code>http.put / http.patch / http.delete</code> — update/remove data</li>
+      <li>Add headers/params with <code>HttpOptions</code></li>
+      <li>Use interceptors for auth, error handling, logging</li>
+    </ul>
+    <p>Demo uses the public <strong>JSONPlaceholder</strong> API.</p>
+  </div>
+
+  <div class="feature-section">
+    <h2>Code Example</h2>
+    <pre class="code-block">{{ code }}</pre>
+  </div>
+
+  <div class="feature-section">
+    <h2>Live Demo</h2>
+    <div class="demo-box">
+
+      <div class="demo-row">
+        <button class="btn btn-primary" (click)="loadPosts()" [disabled]="loading">
+          @if (loading) { <span class="spinner" style="width:14px;height:14px;border-width:2px;"></span> }
+          GET /posts (limit 10)
+        </button>
+        <button class="btn btn-success" (click)="createPost()">POST /posts</button>
+        @if (createResult) {
+          <span class="badge badge-success">{{ createResult }}</span>
+        }
+      </div>
+
+      @if (error) {
+        <div class="demo-output" style="border-left:4px solid var(--danger); color: var(--danger);">
+          Error: {{ error }}
+        </div>
+      }
+
+      @if (posts.length > 0) {
+        <div class="form-group mt-1">
+          <input [(ngModel)]="filter" class="form-control" placeholder="Filter posts by keyword…">
+        </div>
+        <p class="text-muted mb-1" style="font-size:0.85rem;">
+          Showing {{ filteredPosts.length }} of {{ posts.length }} posts
+        </p>
+        <div class="post-list">
+          @for (post of filteredPosts; track post.id) {
+            <div class="post-card">
+              <div class="post-id">POST #{{ post.id }} &nbsp;·&nbsp; User {{ post.userId }}</div>
+              <h4>{{ post.title }}</h4>
+              <p>{{ post.body }}</p>
+            </div>
+          } @empty {
+            <p class="text-muted">No posts match your filter.</p>
+          }
+        </div>
+      }
+
+      @if (!loading && posts.length === 0 && !error) {
+        <p class="text-muted text-center" style="padding:1rem;">
+          Click "GET /posts" to fetch data from JSONPlaceholder
+        </p>
+      }
+    </div>
+  </div>
+</div>

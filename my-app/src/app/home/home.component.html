@@ -1,0 +1,36 @@
+<div class="home-hero">
+  <h1>Angular Feature Showcase</h1>
+  <p>Explore Angular's core features and Angular 21's newest APIs with live interactive examples, code snippets, and explanations — all in one place.</p>
+</div>
+
+<h2 style="font-size:1rem; color:var(--text-muted); margin-bottom:1rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">
+  Core Features
+</h2>
+<div class="features-grid mb-2">
+  @for (f of coreFeatures; track f.path) {
+    <a [routerLink]="f.path" class="feature-card">
+      <div class="icon">{{ f.icon }}</div>
+      <h2>{{ f.title }}</h2>
+      <p>{{ f.desc }}</p>
+    </a>
+  }
+</div>
+
+<div style="background: linear-gradient(135deg, #a18cd1, #fbc2eb); border-radius: 12px; padding: 1.5rem 2rem; margin-bottom: 1.25rem; box-shadow: 0 4px 16px rgba(161,140,209,0.3);">
+  <h2 style="color:white; font-size:1.4rem; margin-bottom:0.35rem;">Angular 21 — New Features</h2>
+  <p style="color:rgba(255,255,255,0.9); font-size:0.95rem;">
+    Angular 21 ships with Signal I/O, <code style="background:rgba(0,0,0,0.15);padding:0.1em 0.4em;border-radius:3px;">linkedSignal</code>,
+    <code style="background:rgba(0,0,0,0.15);padding:0.1em 0.4em;border-radius:3px;">httpResource</code>,
+    Zoneless change detection as the default, and experimental Signal Forms.
+  </p>
+</div>
+
+<div class="features-grid">
+  @for (f of v21Features; track f.path) {
+    <a [routerLink]="f.path" class="feature-card feature-card-v21">
+      <div class="icon">{{ f.icon }}</div>
+      <h2>{{ f.title }}</h2>
+      <p>{{ f.desc }}</p>
+    </a>
+  }
+</div>

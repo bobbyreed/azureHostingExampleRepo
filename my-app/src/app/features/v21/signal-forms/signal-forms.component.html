@@ -1,0 +1,141 @@
+<div class="feature-page">
+  <div class="feature-header" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb);">
+    <h1>Signal Forms</h1>
+    <p>Angular 21 Experimental — Form state built entirely on Signals</p>
+  </div>
+
+  <div class="feature-section">
+    <h2>About This Feature</h2>
+    <p>
+      <strong>Signal Forms</strong> (experimental in Angular 21) is a new approach to forms where
+      the model is a <code>WritableSignal</code> and validation is a reactive layer on top.
+      Unlike Reactive Forms, there is no separate "form model" — the signal IS the model.
+    </p>
+    <ul>
+      <li>
+        <code>form(modelSignal, schemaFn)</code> — wraps a <code>WritableSignal</code>
+        with reactive validation. Returns a <code>FieldTree</code>.
+      </li>
+      <li>
+        <strong>Schema function</strong> receives a typed path tree — call validators like
+        <code>required(p.fieldName)</code>, <code>email(p.fieldName)</code>,
+        <code>minLength(p.fieldName, 3)</code>.
+      </li>
+      <li>
+        All validation state is <strong>Signal-based</strong>:
+        <code>.valid()</code>, <code>.invalid()</code>, <code>.errors()</code>
+        — no <code>statusChanges</code> observable needed.
+      </li>
+      <li>
+        Works seamlessly with <code>linkedSignal</code>, <code>computed</code>, and
+        <code>effect</code> for derived form logic.
+      </li>
+    </ul>
+  </div>
+
+  <div class="feature-section">
+    <h2>Code Example</h2>
+    <pre class="code-block">{{ code }}</pre>
+  </div>
+
+  <div class="feature-section">
+    <h2>Live Demo — Registration Form</h2>
+
+    @if (result) {
+      <div class="demo-output mb-2" style="border-left:4px solid var(--success);">
+        <p class="success-msg mb-1">✓ Form submitted — model signal value:</p>
+        <pre style="font-size:0.82rem; white-space:pre-wrap;">{{ result | json }}</pre>
+        <button class="btn btn-secondary btn-sm mt-1" (click)="reset()">Reset</button>
+      </div>
+    }
+
+    <div class="demo-box">
+      <p class="text-muted mb-2" style="font-size:0.875rem;">
+        Validation is driven by signals — <code>myForm.fieldName.errors()</code> updates
+        reactively as you type.
+      </p>
+
+      <!-- Username -->
+      <div class="form-group">
+        <label>Username <span class="text-danger">*</span></label>
+        <input class="form-control"
+               [class.ng-invalid]="showError('username')"
+               [class.ng-touched]="touched.username"
+               placeholder="3–20 characters"
+               [value]="model().username"
+               (input)="setField('username', $any($event).target.value)"
+               (blur)="touch('username')">
+        @if (showError('username')) {
+          <div class="error-msg">{{ firstError('username') }}</div>
+        }
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label>Email <span class="text-danger">*</span></label>
+        <input class="form-control" type="email"
+               [class.ng-invalid]="showError('email')"
+               [class.ng-touched]="touched.email"
+               placeholder="user@example.com"
+               [value]="model().email"
+               (input)="setField('email', $any($event).target.value)"
+               (blur)="touch('email')">
+        @if (showError('email')) {
+          <div class="error-msg">{{ firstError('email') }}</div>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label>Password <span class="text-danger">*</span></label>
+        <input class="form-control" type="password"
+               [class.ng-invalid]="showError('password')"
+               [class.ng-touched]="touched.password"
+               placeholder="Min 8 characters"
+               [value]="model().password"
+               (input)="setField('password', $any($event).target.value)"
+               (blur)="touch('password')">
+        @if (showError('password')) {
+          <div class="error-msg">{{ firstError('password') }}</div>
+        }
+      </div>
+
+      <!-- Age -->
+      <div class="form-group">
+        <label>Age <span class="text-danger">*</span></label>
+        <input class="form-control" type="number"
+               [class.ng-invalid]="showError('age')"
+               [class.ng-touched]="touched.age"
+               placeholder="Your age"
+               [value]="model().age"
+               (input)="setField('age', $any($event).target.value)"
+               (blur)="touch('age')">
+        @if (showError('age')) {
+          <div class="error-msg">{{ firstError('age') }}</div>
+        }
+      </div>
+
+      <!-- Submit row -->
+      <div class="demo-row" style="margin:0;">
+        <button class="btn btn-primary" (click)="onSubmit()">Register</button>
+        <button class="btn btn-secondary" (click)="reset()">Reset</button>
+        <span class="text-muted" style="font-size:0.85rem;">
+          Form valid (signal): <strong [class.text-success]="myForm().valid()" [class.text-danger]="!myForm().valid()">
+            {{ myForm().valid() }}
+          </strong>
+        </span>
+      </div>
+
+      <!-- Live signal state -->
+      <div class="demo-output mt-2">
+        <strong>Live signal state (from FieldTree):</strong>
+        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:0.5rem; margin-top:0.5rem; font-size:0.82rem; font-family:monospace;">
+          <div>myForm.username().valid() = <strong [class.text-success]="myForm.username().valid()" [class.text-danger]="!myForm.username().valid()">{{ myForm.username().valid() }}</strong></div>
+          <div>myForm.email().valid() = <strong [class.text-success]="myForm.email().valid()" [class.text-danger]="!myForm.email().valid()">{{ myForm.email().valid() }}</strong></div>
+          <div>myForm.password().valid() = <strong [class.text-success]="myForm.password().valid()" [class.text-danger]="!myForm.password().valid()">{{ myForm.password().valid() }}</strong></div>
+          <div>myForm().valid() = <strong [class.text-success]="myForm().valid()" [class.text-danger]="!myForm().valid()">{{ myForm().valid() }}</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

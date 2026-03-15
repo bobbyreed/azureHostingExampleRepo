@@ -1,0 +1,74 @@
+<div class="feature-page">
+  <div class="feature-header">
+    <h1>🔄 Lifecycle Hooks</h1>
+    <p>Tap into key moments of a component's life — from creation to destruction</p>
+  </div>
+
+  <div class="feature-section">
+    <h2>About This Feature</h2>
+    <p>
+      Angular calls <strong>lifecycle hook methods</strong> at specific moments during a component's
+      creation, update, and destruction. Implement the corresponding interface to use each hook.
+    </p>
+    <ol>
+      <li><strong>ngOnChanges</strong> — &#64;Input() values changed</li>
+      <li><strong>ngOnInit</strong> — component initialized (once)</li>
+      <li><strong>ngDoCheck</strong> — custom change detection</li>
+      <li><strong>ngAfterContentInit</strong> — projected content initialized</li>
+      <li><strong>ngAfterContentChecked</strong> — projected content checked</li>
+      <li><strong>ngAfterViewInit</strong> — component view rendered (access &#64;ViewChild)</li>
+      <li><strong>ngAfterViewChecked</strong> — component view checked</li>
+      <li><strong>ngOnDestroy</strong> — just before destruction (cleanup!)</li>
+    </ol>
+  </div>
+
+  <div class="feature-section">
+    <h2>Code Example</h2>
+    <pre class="code-block">{{ code }}</pre>
+  </div>
+
+  <div class="feature-section">
+    <h2>Live Demo</h2>
+    <div class="demo-box">
+      <div class="demo-row">
+        <button class="btn btn-primary" (click)="showChild = !showChild">
+          {{ showChild ? 'Destroy' : 'Create' }} Child Component
+        </button>
+        <button class="btn btn-secondary btn-sm" (click)="clearLog()" [disabled]="hookLog.length === 0">
+          Clear Log
+        </button>
+        <span class="text-muted" style="font-size:0.85rem;">{{ hookLog.length }} events logged</span>
+      </div>
+
+      @if (showChild) {
+        <div class="form-group mt-1">
+          <label>Change &#64;Input() value (triggers ngOnChanges)</label>
+          <input [(ngModel)]="inputValue" class="form-control" placeholder="Change me…">
+        </div>
+        <app-lifecycle-child [inputValue]="inputValue" (hookFired)="onHook($event)" />
+      }
+
+      <div class="mt-2">
+        <p class="font-bold mb-1" style="font-size:0.85rem;">Hook Event Log (newest first)</p>
+        <div class="log-panel">
+          @for (entry of hookLog; track entry.index) {
+            <div class="log-entry" [class]="hookClass(entry.type)">
+              #{{ entry.index }} &nbsp; <strong>{{ entry.hook }}</strong>
+              @if (entry.detail) { &nbsp;— {{ entry.detail }} }
+            </div>
+          } @empty {
+            <div class="text-muted">Create the child component to see hooks fire…</div>
+          }
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.75rem; font-size:0.8rem;">
+          <span class="hook-init"    style="padding:0.15rem 0.5rem;">■ Init</span>
+          <span class="hook-changes" style="padding:0.15rem 0.5rem;">■ Changes</span>
+          <span class="hook-check"   style="padding:0.15rem 0.5rem;">■ DoCheck</span>
+          <span class="hook-content" style="padding:0.15rem 0.5rem;">■ Content</span>
+          <span class="hook-view"    style="padding:0.15rem 0.5rem;">■ View</span>
+          <span class="hook-destroy" style="padding:0.15rem 0.5rem;">■ Destroy</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

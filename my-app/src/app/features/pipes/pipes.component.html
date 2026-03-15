@@ -1,0 +1,105 @@
+<div class="feature-page">
+  <div class="feature-header">
+    <h1>🔧 Pipes</h1>
+    <p>Transform data in templates — built-in pipes and custom pipes</p>
+  </div>
+
+  <div class="feature-section">
+    <h2>About This Feature</h2>
+    <p>
+      <strong>Pipes</strong> transform data for display in templates using the <code>|</code> operator.
+      Angular ships with many built-in pipes. You can also create <strong>custom pipes</strong> by
+      implementing <code>PipeTransform</code>. The <code>async</code> pipe automatically subscribes
+      to Observables/Promises and handles cleanup.
+    </p>
+  </div>
+
+  <div class="feature-section">
+    <h2>Code Example</h2>
+    <pre class="code-block">{{ code }}</pre>
+  </div>
+
+  <div class="feature-section">
+    <h2>Live Demo</h2>
+    <div class="demo-box">
+      <table class="data-table">
+        <thead>
+          <tr><th>Pipe</th><th>Input</th><th>Output</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>date:'fullDate'</code></td>
+            <td><code>new Date()</code></td>
+            <td><strong>{{ today | date:'fullDate' }}</strong></td>
+          </tr>
+          <tr>
+            <td><code>date:'shortTime'</code></td>
+            <td><code>new Date()</code></td>
+            <td><strong>{{ today | date:'shortTime' }}</strong></td>
+          </tr>
+          <tr>
+            <td><code>currency:'USD'</code></td>
+            <td><code>{{ price }}</code></td>
+            <td><strong>{{ price | currency:'USD' }}</strong></td>
+          </tr>
+          <tr>
+            <td><code>currency:'EUR':'symbol-narrow'</code></td>
+            <td><code>{{ price }}</code></td>
+            <td><strong>{{ price | currency:'EUR':'symbol-narrow' }}</strong></td>
+          </tr>
+          <tr>
+            <td><code>number:'1.2-2'</code></td>
+            <td><code>{{ bigNumber }}</code></td>
+            <td><strong>{{ bigNumber | number:'1.2-2' }}</strong></td>
+          </tr>
+          <tr>
+            <td><code>percent:'1.1-1'</code></td>
+            <td><code>{{ ratio }}</code></td>
+            <td><strong>{{ ratio | percent:'1.1-1' }}</strong></td>
+          </tr>
+          <tr>
+            <td><code>uppercase</code></td>
+            <td><code>{{ sampleText | slice:0:15 }}…</code></td>
+            <td><strong>{{ sampleText | uppercase | slice:0:15 }}…</strong></td>
+          </tr>
+          <tr>
+            <td><code>titlecase</code></td>
+            <td><code>{{ sampleText | slice:0:20 }}…</code></td>
+            <td><strong>{{ sampleText | titlecase | slice:0:20 }}…</strong></td>
+          </tr>
+          <tr>
+            <td><code>slice:1:4</code></td>
+            <td><code>{{ sampleArray | json }}</code></td>
+            <td><strong>{{ sampleArray | slice:1:4 | json }}</strong></td>
+          </tr>
+          <tr>
+            <td><code>json</code></td>
+            <td><em>object</em></td>
+            <td><code>{{ sampleObj | json }}</code></td>
+          </tr>
+          <tr>
+            <td><code>async</code></td>
+            <td><em>Observable (1.5s delay)</em></td>
+            <td><strong>{{ asyncValue$ | async }}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <hr class="divider">
+
+      <p class="font-bold mb-1">Custom <code>truncate</code> Pipe</p>
+      <div class="form-group">
+        <label>Limit: {{ truncateLimit }} chars
+          <input type="range" min="10" max="100" [(ngModel)]="truncateLimit" class="w-full mt-1">
+        </label>
+      </div>
+      <div class="demo-output">
+        <p class="text-muted mb-1" style="font-size:0.8rem;">Original ({{ truncateText.length }} chars):</p>
+        <p style="word-break:break-all;">{{ truncateText }}</p>
+        <hr style="margin:0.5rem 0; border-color:#cbd5e0">
+        <p class="text-muted mb-1" style="font-size:0.8rem;">With <code>truncate:{{ truncateLimit }}</code>:</p>
+        <p><strong>{{ truncateText | truncate:truncateLimit }}</strong></p>
+      </div>
+    </div>
+  </div>
+</div>

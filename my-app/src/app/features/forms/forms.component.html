@@ -1,0 +1,108 @@
+<div class="feature-page">
+  <div class="feature-header">
+    <h1>📝 Reactive Forms</h1>
+    <p>Type-safe forms with FormBuilder, validation, and dynamic FormArray</p>
+  </div>
+
+  <div class="feature-section">
+    <h2>About This Feature</h2>
+    <p>
+      Angular's <strong>Reactive Forms</strong> are defined in the component class using <code>FormBuilder</code>.
+      They provide a model-driven approach where form state is managed programmatically,
+      offering strong typing, easy testing, and built-in <code>Validators</code>.
+    </p>
+    <ul>
+      <li><code>FormGroup</code> — groups related controls together</li>
+      <li><code>FormControl</code> — a single input value with validation</li>
+      <li><code>FormArray</code> — a dynamic list of controls (e.g., list of skills)</li>
+      <li><code>Validators</code> — built-in: required, email, min, max, minLength, pattern</li>
+    </ul>
+  </div>
+
+  <div class="feature-section">
+    <h2>Code Example</h2>
+    <pre class="code-block">{{ code }}</pre>
+  </div>
+
+  <div class="feature-section">
+    <h2>Live Demo</h2>
+
+    @if (submittedData) {
+      <div class="demo-output mb-2" style="border-left: 4px solid #48bb78;">
+        <p class="success-msg mb-1">✓ Form submitted successfully!</p>
+        <pre style="font-size:0.82rem; white-space:pre-wrap;">{{ submittedData | json }}</pre>
+        <button class="btn btn-secondary btn-sm mt-1" (click)="reset()">Reset</button>
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input formControlName="name" class="form-control" placeholder="John Doe">
+        @if (fieldError(name, 'required'))   { <div class="error-msg">Name is required.</div> }
+        @if (fieldError(name, 'minlength'))  { <div class="error-msg">Minimum 3 characters.</div> }
+      </div>
+
+      <div class="form-group">
+        <label>Email *</label>
+        <input formControlName="email" class="form-control" placeholder="john@example.com" type="email">
+        @if (fieldError(email, 'required')) { <div class="error-msg">Email is required.</div> }
+        @if (fieldError(email, 'email'))    { <div class="error-msg">Enter a valid email.</div> }
+      </div>
+
+      <div class="form-group">
+        <label>Age *</label>
+        <input formControlName="age" class="form-control" placeholder="25" type="number">
+        @if (fieldError(age, 'required')) { <div class="error-msg">Age is required.</div> }
+        @if (fieldError(age, 'min') || fieldError(age, 'max')) {
+          <div class="error-msg">Age must be between 1 and 120.</div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Role</label>
+        <select formControlName="role" class="form-control">
+          <option value="developer">Developer</option>
+          <option value="designer">Designer</option>
+          <option value="manager">Manager</option>
+          <option value="qa">QA Engineer</option>
+        </select>
+      </div>
+
+      <!-- FormArray -->
+      <div class="form-group">
+        <label>Skills (FormArray)</label>
+        <div formArrayName="skills" style="display:flex; flex-direction:column; gap:0.5rem;">
+          @for (ctrl of skills.controls; track ctrl; let i = $index) {
+            <div class="demo-row" style="margin:0">
+              <input [formControlName]="i" class="form-control" placeholder="Skill name" style="flex:1">
+              @if (skills.length > 1) {
+                <button type="button" class="btn btn-danger btn-sm" (click)="removeSkill(i)">✕</button>
+              }
+            </div>
+            @if (ctrl.invalid && (ctrl.dirty || submitted)) {
+              <div class="error-msg">Skill name is required.</div>
+            }
+          }
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm mt-1" (click)="addSkill()">+ Add Skill</button>
+      </div>
+
+      <div class="form-group">
+        <label style="display:flex; align-items:center; gap:0.5rem; font-weight:400;">
+          <input type="checkbox" formControlName="newsletter"> Subscribe to newsletter
+        </label>
+      </div>
+
+      <div class="demo-row" style="margin:0">
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="button" class="btn btn-secondary" (click)="reset()">Reset</button>
+        <span class="text-muted" style="font-size:0.85rem;">
+          Form status: <strong [class.text-success]="form.valid" [class.text-danger]="form.invalid">
+            {{ form.valid ? 'VALID' : 'INVALID' }}
+          </strong>
+        </span>
+      </div>
+    </form>
+  </div>
+</div>

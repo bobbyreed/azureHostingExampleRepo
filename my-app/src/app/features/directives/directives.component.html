@@ -1,0 +1,112 @@
+<div class="feature-page">
+  <div class="feature-header">
+    <h1>🎨 Directives</h1>
+    <p>Control flow, structural directives, attribute directives, and custom directives</p>
+  </div>
+
+  <div class="feature-section">
+    <h2>About This Feature</h2>
+    <p>
+      Angular 17 introduced a new <strong>built-in control flow</strong> syntax using <code>&#64;if</code>,
+      <code>&#64;for</code>, and <code>&#64;switch</code> — replacing <code>*ngIf</code> and <code>*ngFor</code>
+      for most cases. <strong>Attribute directives</strong> like <code>ngClass</code> and <code>ngStyle</code>
+      modify appearance and behavior without changing DOM structure.
+      You can also write <strong>custom directives</strong> with <code>&#64;HostListener</code>.
+    </p>
+  </div>
+
+  <div class="feature-section">
+    <h2>Code Example</h2>
+    <pre class="code-block">{{ code }}</pre>
+  </div>
+
+  <div class="feature-section">
+    <h2>Live Demo</h2>
+    <div class="demo-box">
+
+      <!-- @if -->
+      <p class="font-bold mb-1">&#64;if / &#64;else</p>
+      <div class="demo-row">
+        <button class="btn btn-primary" (click)="isVisible = !isVisible">
+          Toggle visibility
+        </button>
+        @if (isVisible) {
+          <span class="badge badge-success">I am visible! ✓</span>
+        } @else {
+          <span class="badge badge-danger">I am hidden ✗</span>
+        }
+      </div>
+
+      <hr class="divider">
+
+      <!-- @for -->
+      <p class="font-bold mb-1">&#64;for (with &#64;empty)</p>
+      <div class="demo-row">
+        <button class="btn btn-success btn-sm" (click)="addFruit()">+ Add fruit</button>
+        <button class="btn btn-danger btn-sm" (click)="removeFruit(0)" [disabled]="fruits.length === 0">− Remove first</button>
+        <span class="text-muted">{{ fruits.length }} items</span>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+        @for (fruit of fruits; track fruit; let i = $index) {
+          <span class="badge badge-primary" style="cursor:pointer" (click)="removeFruit(i)">
+            {{ fruit }} ×
+          </span>
+        } @empty {
+          <em class="text-muted">No fruits — add some!</em>
+        }
+      </div>
+
+      <hr class="divider">
+
+      <!-- @switch -->
+      <p class="font-bold mb-1">&#64;switch</p>
+      <div class="demo-row">
+        <button class="btn btn-secondary" (click)="nextLight()">Change light</button>
+        @switch (trafficLight) {
+          @case ('red')    { <span class="badge badge-danger"  style="font-size:1rem">🔴 RED — Stop</span> }
+          @case ('yellow') { <span class="badge badge-warning" style="font-size:1rem">🟡 YELLOW — Slow</span> }
+          @case ('green')  { <span class="badge badge-success" style="font-size:1rem">🟢 GREEN — Go!</span> }
+        }
+      </div>
+
+      <hr class="divider">
+
+      <!-- ngClass -->
+      <p class="font-bold mb-1">ngClass</p>
+      <div class="demo-row">
+        <button class="btn btn-sm" [ngClass]="alertType === 'success' ? 'btn-success' : 'btn-secondary'"
+          (click)="alertType = 'success'">Success</button>
+        <button class="btn btn-sm" [ngClass]="alertType === 'warning' ? 'btn-warning' : 'btn-secondary'"
+          (click)="alertType = 'warning'">Warning</button>
+        <button class="btn btn-sm" [ngClass]="alertType === 'danger' ? 'btn-danger' : 'btn-secondary'"
+          (click)="alertType = 'danger'">Danger</button>
+      </div>
+      <div [ngClass]="'badge badge-' + alertType" style="padding: 0.5rem 1rem; font-size:0.9rem;">
+        {{ alertMessages[alertType] }}
+      </div>
+
+      <hr class="divider">
+
+      <!-- ngStyle -->
+      <p class="font-bold mb-1">ngStyle</p>
+      <div class="demo-row">
+        <label>Color: <input type="color" [(ngModel)]="boxColor" style="cursor:pointer"></label>
+        <label>Size: <input type="range" min="40" max="140" [(ngModel)]="boxSize"> {{ boxSize }}px</label>
+      </div>
+      <div [ngStyle]="{ background: boxColor, width: boxSize + 'px', height: boxSize + 'px', borderRadius: '8px', transition: 'all 0.3s' }"></div>
+
+      <hr class="divider">
+
+      <!-- Custom directive -->
+      <p class="font-bold mb-1">Custom Highlight Directive (hover over items)</p>
+      <div style="display:flex; flex-wrap:wrap; gap:0.75rem; margin-top:0.5rem;">
+        @for (item of highlightColors; track item.label) {
+          <div [appHighlight]="item.color"
+               style="padding:0.6rem 1.25rem; border:1px solid #e2e8f0; border-radius:6px; cursor:default;">
+            Hover for {{ item.label }}
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

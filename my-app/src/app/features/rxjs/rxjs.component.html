@@ -1,0 +1,90 @@
+<div class="feature-page">
+  <div class="feature-header">
+    <h1>🌊 RxJS &amp; Observables</h1>
+    <p>Reactive programming with streams, operators, and automatic cleanup</p>
+  </div>
+
+  <div class="feature-section">
+    <h2>About This Feature</h2>
+    <p>
+      <strong>RxJS</strong> is Angular's reactive programming library. It lets you treat events and
+      async data as streams you can compose with <strong>operators</strong>.
+    </p>
+    <ul>
+      <li><code>Observable</code> — lazy stream of values over time</li>
+      <li><code>Subject</code> — multicast observable + observer; manually push values</li>
+      <li><code>BehaviorSubject</code> — Subject with an initial value; replays last value to new subscribers</li>
+      <li><code>debounceTime</code> — wait for a pause before emitting (e.g., search)</li>
+      <li><code>distinctUntilChanged</code> — skip duplicate consecutive values</li>
+      <li><code>scan</code> — accumulate values over time (like Array.reduce)</li>
+      <li><code>takeUntil</code> — complete when another observable emits (memory-safe unsubscribe)</li>
+    </ul>
+  </div>
+
+  <div class="feature-section">
+    <h2>Code Example</h2>
+    <pre class="code-block">{{ code }}</pre>
+  </div>
+
+  <div class="feature-section">
+    <h2>Live Demo</h2>
+    <div class="demo-box">
+
+      <!-- Debounced search -->
+      <p class="font-bold mb-1">Subject + debounceTime + distinctUntilChanged</p>
+      <div class="form-group">
+        <input class="form-control" [(ngModel)]="searchTerm"
+               (ngModelChange)="onSearch($event)"
+               placeholder="Search topics… (waits 400ms after you stop typing)">
+      </div>
+      <p class="text-muted mb-1" style="font-size:0.85rem;">{{ searchStatus }}</p>
+      <div class="rx-result-list">
+        @for (r of searchResults; track r.id) {
+          <div class="rx-item">📄 {{ r.title }}</div>
+        }
+      </div>
+
+      <hr class="divider">
+
+      <!-- BehaviorSubject event bus -->
+      <p class="font-bold mb-1">BehaviorSubject (event bus)</p>
+      <div class="demo-row">
+        <button class="btn btn-primary btn-sm"  (click)="emitEvent('User clicked Save')">Emit Save</button>
+        <button class="btn btn-warning btn-sm"  (click)="emitEvent('User navigated')">Emit Navigate</button>
+        <button class="btn btn-success btn-sm"  (click)="emitEvent('Data loaded')">Emit Load</button>
+        <button class="btn btn-danger btn-sm"   (click)="emitEvent('Error occurred')">Emit Error</button>
+      </div>
+      <div class="log-panel mt-1">
+        @for (evt of events; track $index) {
+          <div class="log-entry hook-init">{{ evt }}</div>
+        } @empty {
+          <div class="text-muted">Click a button to emit events…</div>
+        }
+      </div>
+
+      <hr class="divider">
+
+      <!-- interval + takeUntil -->
+      <p class="font-bold mb-1">interval() + takeUntil() (auto-cleanup)</p>
+      <div class="demo-row">
+        <button class="btn btn-success btn-sm" (click)="startTimer()" [disabled]="timerRunning">▶ Start</button>
+        <button class="btn btn-danger btn-sm"  (click)="stopTimer()"  [disabled]="!timerRunning">⏹ Stop</button>
+        <button class="btn btn-secondary btn-sm" (click)="resetTimer()">↺ Reset</button>
+        <span style="font-size:2rem; font-weight:700; color:var(--primary); font-variant-numeric:tabular-nums;">
+          {{ tick }}s
+        </span>
+      </div>
+
+      <hr class="divider">
+
+      <!-- scan() -->
+      <p class="font-bold mb-1">scan() — accumulates clicks</p>
+      <div class="demo-row">
+        <button class="btn btn-primary" (click)="clickSubject()">Click me (Subject)</button>
+        <span>Total via <code>scan()</code>: <strong class="text-primary" style="font-size:1.2rem">
+          {{ clickTotal$ | async }}
+        </strong></span>
+      </div>
+    </div>
+  </div>
+</div>

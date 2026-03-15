@@ -1,0 +1,48 @@
+<div class="feature-page">
+  <div class="feature-header">
+    <h1>⚙️ Services &amp; Dependency Injection</h1>
+    <p>Share state and logic across components using injectable services</p>
+  </div>
+
+  <div class="feature-section">
+    <h2>About This Feature</h2>
+    <p>
+      <strong>Services</strong> are classes decorated with <code>&#64;Injectable</code> that provide
+      reusable logic, data access, or shared state. Angular's <strong>Dependency Injection (DI)</strong>
+      system creates and provides service instances automatically.
+    </p>
+    <ul>
+      <li><code>providedIn: 'root'</code> — singleton shared across the entire app</li>
+      <li>Injected via constructor: <code>constructor(private svc: CounterService)</code></li>
+      <li>Can use Signals, RxJS, or plain state internally</li>
+      <li>Services are tree-shakeable when using <code>providedIn: 'root'</code></li>
+    </ul>
+    <p>
+      The demo below shows two completely separate <code>CounterWidget</code> components that both
+      inject the same <code>CounterService</code> singleton — updating one updates both.
+    </p>
+  </div>
+
+  <div class="feature-section">
+    <h2>Code Example</h2>
+    <pre class="code-block">{{ code }}</pre>
+  </div>
+
+  <div class="feature-section">
+    <h2>Live Demo</h2>
+    <div class="demo-box">
+      <p class="text-muted mb-2" style="font-size:0.9rem;">
+        Both widgets below share the same <strong>CounterService</strong> instance. Click any button in
+        either widget — both displays update simultaneously.
+      </p>
+      <div class="widget-grid">
+        <app-counter-widget label="Widget A" />
+        <app-counter-widget label="Widget B" />
+      </div>
+      <div class="demo-output mt-2">
+        Shared service value read from parent: <strong>{{ svc.count() }}</strong>
+        &nbsp;|&nbsp; Negative: <strong [class.text-danger]="svc.isNegative()">{{ svc.isNegative() }}</strong>
+      </div>
+    </div>
+  </div>
+</div>

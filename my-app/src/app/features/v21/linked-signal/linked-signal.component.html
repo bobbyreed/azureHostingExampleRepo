@@ -1,0 +1,111 @@
+<div class="feature-page">
+  <div class="feature-header" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+    <h1>linkedSignal()</h1>
+    <p>Angular 19+ — A writable derived signal that resets when its source changes</p>
+  </div>
+
+  <div class="feature-section">
+    <h2>About This Feature</h2>
+    <p>
+      <code>linkedSignal()</code> fills the gap between <code>signal()</code> (writable, no dependency)
+      and <code>computed()</code> (derived, read-only). It starts derived from a computation
+      but remains <strong>writable</strong> — a manual write is an override until the source
+      signal changes, which resets it back to the computed value.
+    </p>
+    <ul>
+      <li>
+        <strong>Simple form:</strong> <code>linkedSignal(() => source())</code> — derives value,
+        resets on source change, allows manual writes.
+      </li>
+      <li>
+        <strong>Advanced form:</strong> <code>linkedSignal(&#123; source, computation &#125;)</code> —
+        receives the previous value in <code>computation</code>, useful for accumulation or
+        keeping stale data visible while loading.
+      </li>
+    </ul>
+  </div>
+
+  <div class="feature-section">
+    <h2>Code Example</h2>
+    <pre class="code-block">{{ code }}</pre>
+  </div>
+
+  <div class="feature-section">
+    <h2>Live Demo — Price Calculator</h2>
+    <div class="demo-box">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.25rem;">
+        <div class="form-group" style="margin:0">
+          <label>Base Price ($): {{ basePrice() }}</label>
+          <input type="range" min="10" max="500" [value]="basePrice()"
+                 (input)="setBasePrice(+$any($event).target.value)" class="w-full mt-1">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Discount %: {{ discountPct() }}%</label>
+          <input type="range" min="0" max="50" [value]="discountPct()"
+                 (input)="setDiscountPct(+$any($event).target.value)" class="w-full mt-1">
+        </div>
+      </div>
+
+      <table class="data-table mb-2">
+        <thead>
+          <tr><th>Signal</th><th>Type</th><th>Value</th><th>Writable?</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>basePrice</code></td>
+            <td><span class="badge badge-primary">signal()</span></td>
+            <td><strong>{{ basePrice() | currency }}</strong></td>
+            <td class="text-success">✓ Yes</td>
+          </tr>
+          <tr>
+            <td><code>taxedPrice</code></td>
+            <td><span class="badge badge-purple">computed()</span></td>
+            <td><strong>{{ taxedPrice() | currency }}</strong></td>
+            <td class="text-danger">✗ No</td>
+          </tr>
+          <tr style="background:#f0fff4;">
+            <td><code>discountedPrice</code></td>
+            <td><span class="badge badge-success">linkedSignal()</span></td>
+            <td><strong>{{ discountedPrice() | currency }}</strong>
+              @if (manuallyOverridden) {
+                <span class="badge badge-warning" style="margin-left:0.5rem;">overridden</span>
+              }
+            </td>
+            <td class="text-success">✓ Yes</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="demo-row">
+        <label style="font-size:0.875rem; white-space:nowrap;">Manual override discountedPrice:</label>
+        <input type="number" class="form-control" style="width:120px"
+               [value]="discountedPrice()"
+               (change)="overridePrice(+$any($event).target.value)"
+               placeholder="Set price">
+        <span class="text-muted" style="font-size:0.8rem;">
+          Changes to sliders above will reset it
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="feature-section">
+    <h2>Live Demo — Pagination with Previous Value</h2>
+    <div class="demo-box">
+      <p class="text-muted mb-2" style="font-size:0.875rem;">
+        The <strong>advanced form</strong> of linkedSignal receives the previous value in its
+        computation — great for keeping stale UI visible while new data loads.
+      </p>
+      <div class="demo-row">
+        <button class="btn btn-secondary btn-sm" (click)="prevPage()" [disabled]="page() === 1">← Prev</button>
+        <strong>Page {{ page() }} of 3</strong>
+        <button class="btn btn-primary btn-sm" (click)="nextPage()" [disabled]="page() === 3">Next →</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem;">
+        @for (item of pageItems(); track item) {
+          <span class="badge badge-primary" style="font-size:0.9rem;padding:0.4rem 0.9rem;">{{ item }}</span>
+        }
+      </div>
+    </div>
+  </div>
+</div>

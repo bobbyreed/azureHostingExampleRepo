@@ -1,0 +1,127 @@
+<div class="feature-page">
+  <div class="feature-header" style="background: linear-gradient(135deg, #fa709a, #fee140);">
+    <h1 style="color:#1a202c;">Zoneless Change Detection</h1>
+    <p style="color:#2d3748;">Angular 21 default — No zone.js, no monkey-patching, just signals</p>
+  </div>
+
+  <div class="feature-section">
+    <h2>About This Feature</h2>
+    <p>
+      In Angular 21, <strong>new applications are zoneless by default</strong>.
+      Zone.js is no longer required. Angular 21 uses <strong>signal-based change detection</strong>
+      instead of zone-based change detection.
+    </p>
+    <ul>
+      <li>
+        <strong>Zone.js</strong> worked by monkey-patching browser APIs to detect <em>any</em>
+        async operation and trigger full change detection. This caused unnecessary re-renders
+        and hurt Core Web Vitals (especially INP — Interaction to Next Paint).
+      </li>
+      <li>
+        <strong>Zoneless</strong> tracks signal dependencies at the component level.
+        Only components that read a changed signal re-render — fine-grained, efficient.
+      </li>
+      <li>
+        ~35KB bundle reduction from removing zone.js. Faster startup. Simpler mental model.
+      </li>
+      <li>
+        Enabled via <code>provideZonelessChangeDetection()</code> — automatic in Angular 21 new projects.
+      </li>
+    </ul>
+  </div>
+
+  <div class="feature-section">
+    <h2>Configuration</h2>
+    <pre class="code-block">{{ configCode }}</pre>
+  </div>
+
+  <div class="feature-section">
+    <h2>Why Zoneless?</h2>
+    <pre class="code-block">{{ whyCode }}</pre>
+  </div>
+
+  <div class="feature-section">
+    <h2>Live Demo — Pure Signal Reactivity (no zone.js needed)</h2>
+    <div class="demo-box">
+      <p class="text-muted mb-2" style="font-size:0.875rem;">
+        This demo runs in zoneless mode. All UI updates are driven purely by signal changes —
+        no Zone.js involved:
+      </p>
+
+      <div class="demo-row">
+        <button class="btn btn-danger btn-sm"    (click)="decrement()">−</button>
+        <button class="btn btn-secondary btn-sm" (click)="resetCount()">Reset</button>
+        <button class="btn btn-success btn-sm"   (click)="increment()">+</button>
+        <span>
+          count() = <strong class="text-primary" style="font-size:1.5rem">{{ count() }}</strong>
+          &nbsp;|&nbsp;
+          computed doubled = <strong>{{ doubled() }}</strong>
+        </span>
+      </div>
+
+      <div class="demo-row mt-1">
+        <label>name signal:
+          <input class="form-control" style="width:200px;"
+                 [value]="name()" (input)="setName($any($event).target.value)">
+        </label>
+        <span>computed greeting: <strong>{{ greeting() }}</strong></span>
+      </div>
+
+      <div class="mt-2">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem;">
+          <p class="font-bold" style="font-size:0.875rem;">Signal update log</p>
+          <button class="btn btn-secondary btn-sm" (click)="clearLog()">Clear</button>
+        </div>
+        <div class="log-panel">
+          @for (entry of log; track $index) {
+            <div class="log-entry hook-init">{{ entry }}</div>
+          } @empty {
+            <div class="text-muted">Click the buttons to see signal updates…</div>
+          }
+        </div>
+      </div>
+
+      <div class="demo-output mt-2" style="background:#f0fff4; border-left:4px solid var(--success);">
+        <strong class="text-success">✓ No Zone.js needed</strong> — every update above is driven
+        by <code>signal.set()</code> / <code>signal.update()</code> / <code>computed()</code> only.
+        Angular knows exactly which template expressions changed and re-renders only those.
+      </div>
+    </div>
+  </div>
+
+  <div class="feature-section">
+    <h2>Zone.js vs Zoneless at a glance</h2>
+    <table class="data-table">
+      <thead>
+        <tr><th>Aspect</th><th>Zone.js (pre-21)</th><th>Zoneless (Angular 21+)</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Bundle size</td>
+          <td>+~35KB (zone.js)</td>
+          <td class="text-success">0KB overhead</td>
+        </tr>
+        <tr>
+          <td>Change detection trigger</td>
+          <td>Any async event (over-triggers)</td>
+          <td class="text-success">Signal changes only (precise)</td>
+        </tr>
+        <tr>
+          <td>Core Web Vitals (INP)</td>
+          <td>Often hurt by excessive CD</td>
+          <td class="text-success">Improved by up to 30%</td>
+        </tr>
+        <tr>
+          <td>Required for reactivity</td>
+          <td>Zone.js monkey-patching</td>
+          <td class="text-success">Signals + async pipe</td>
+        </tr>
+        <tr>
+          <td>Default in Angular 21</td>
+          <td>No (opt-in)</td>
+          <td class="text-success">Yes</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

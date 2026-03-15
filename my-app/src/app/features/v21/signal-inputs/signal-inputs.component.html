@@ -1,0 +1,89 @@
+<div class="feature-page">
+  <div class="feature-header" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+    <h1>Signal Inputs, Outputs &amp; Model</h1>
+    <p>Angular 21 — Replace &#64;Input/&#64;Output decorators with functional signal APIs</p>
+  </div>
+
+  <div class="feature-section">
+    <h2>About This Feature</h2>
+    <p>
+      Angular 21 provides functional alternatives to decorator-based component I/O.
+      These are now the <strong>preferred</strong> approach for new components.
+    </p>
+    <ul>
+      <li>
+        <code>input(defaultValue)</code> — creates a read-only <strong>Signal</strong> for incoming data.
+        The value is set by the parent via property binding.
+      </li>
+      <li>
+        <code>input.required&lt;T&gt;()</code> — same as above but the TypeScript compiler
+        enforces that the parent <em>must</em> provide a value.
+      </li>
+      <li>
+        <code>output&lt;T&gt;()</code> — replaces <code>&#64;Output() EventEmitter</code>.
+        Call <code>.emit(value)</code> to fire events.
+      </li>
+      <li>
+        <code>model(defaultValue)</code> — creates a <strong>WritableSignal</strong> that enables
+        two-way binding (<code>[(property)]</code>). The child can read <em>and</em> write;
+        writes automatically propagate back to the parent's signal.
+      </li>
+    </ul>
+  </div>
+
+  <div class="feature-section">
+    <h2>Code Example</h2>
+    <pre class="code-block">{{ code }}</pre>
+  </div>
+
+  <div class="feature-section">
+    <h2>Live Demo</h2>
+    <div class="demo-box">
+      <p class="text-muted mb-2" style="font-size:0.875rem;">
+        Control the child component from the parent using signals:
+      </p>
+
+      <div class="demo-row">
+        <label style="flex:1;">
+          name (input.required):
+          <input class="form-control mt-1" [value]="nameInput"
+                 (input)="updateName($any($event).target.value)" placeholder="Card name">
+        </label>
+        <label>
+          color (input with default):
+          <input type="color" [value]="colorInput"
+                 (input)="updateColor($any($event).target.value)"
+                 style="height:40px;cursor:pointer;display:block;margin-top:0.35rem;">
+        </label>
+      </div>
+
+      <div class="demo-row">
+        <button class="btn btn-secondary" (click)="toggleParentLike()">
+          Parent toggles liked → {{ isLiked() ? '❤️' : '🤍' }}
+        </button>
+        <span class="text-muted" style="font-size:0.85rem;">
+          (model() in sync — child can also toggle it)
+        </span>
+      </div>
+
+      <app-signal-card
+        [name]="cardName()"
+        [color]="cardColor()"
+        [(liked)]="isLiked"
+        (greet)="onGreet($event)">
+      </app-signal-card>
+
+      @if (greeting) {
+        <div class="demo-output mt-2">
+          output() received: <strong>{{ greeting }}</strong>
+        </div>
+      }
+
+      <div class="demo-output mt-2">
+        <strong>Parent signal reads:</strong>
+        &nbsp; cardName() = "{{ cardName() }}"
+        &nbsp;|&nbsp; isLiked() = {{ isLiked() }}
+      </div>
+    </div>
+  </div>
+</div>

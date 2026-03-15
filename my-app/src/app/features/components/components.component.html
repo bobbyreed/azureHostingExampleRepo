@@ -1,0 +1,84 @@
+<div class="feature-page">
+  <div class="feature-header">
+    <h1>🧩 Components &amp; Data Binding</h1>
+    <p>The fundamental building blocks of every Angular application</p>
+  </div>
+
+  <div class="feature-section">
+    <h2>About This Feature</h2>
+    <p>
+      Angular <strong>components</strong> control a patch of screen called a view. Each component has a
+      TypeScript class (the logic) and an HTML template (the view). They communicate via four binding types:
+    </p>
+    <ul>
+      <li><strong>Interpolation</strong> <code>{{ '{{' }} value {{ '}}' }}</code> — renders data as text</li>
+      <li><strong>Property binding</strong> <code>[property]="expr"</code> — sets element/component properties</li>
+      <li><strong>Event binding</strong> <code>(event)="handler()"</code> — listens for DOM events</li>
+      <li><strong>Two-way binding</strong> <code>[(ngModel)]="value"</code> — syncs view ↔ model</li>
+    </ul>
+    <p>
+      Components can accept data from a parent with <code>&#64;Input()</code> and emit events to a parent
+      with <code>&#64;Output() EventEmitter</code>.
+    </p>
+  </div>
+
+  <div class="feature-section">
+    <h2>Code Example</h2>
+    <pre class="code-block">{{ code }}</pre>
+  </div>
+
+  <div class="feature-section">
+    <h2>Live Demo</h2>
+    <div class="demo-box">
+
+      <!-- Interpolation -->
+      <p class="font-bold mb-1">Interpolation</p>
+      <div class="demo-output">
+        App: <strong>{{ appName }}</strong> &nbsp;|&nbsp; Angular v{{ version }}
+      </div>
+
+      <hr class="divider">
+
+      <!-- Event binding -->
+      <p class="font-bold mb-1">Event Binding</p>
+      <div class="demo-row">
+        <button class="btn btn-primary" (click)="handleClick()">Click me!</button>
+        <span>Clicked <strong>{{ clickCount }}</strong> times</span>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Two-way binding -->
+      <p class="font-bold mb-1">Two-Way Binding with NgModel</p>
+      <div class="demo-row">
+        <input class="form-control w-full" [(ngModel)]="twoWayText" placeholder="Type something…">
+      </div>
+      <div class="demo-output">Model value: <strong>{{ twoWayText }}</strong></div>
+
+      <hr class="divider">
+
+      <!-- Property binding + child component + Output -->
+      <p class="font-bold mb-1">Child Component with &#64;Input() &amp; &#64;Output()</p>
+      <div class="demo-row">
+        <label>Name:
+          <input class="form-control" style="width:160px" [(ngModel)]="cardName" placeholder="Enter name">
+        </label>
+        <label>Color:
+          <input type="color" [(ngModel)]="cardColor" style="height:36px; cursor:pointer;">
+        </label>
+      </div>
+
+      <app-greeting-card
+        [name]="cardName"
+        [color]="cardColor"
+        (greet)="onGreet($event)">
+      </app-greeting-card>
+
+      @if (lastGreeting) {
+        <div class="demo-output mt-2">
+          &#64;Output() received: <strong>{{ lastGreeting }}</strong>
+        </div>
+      }
+    </div>
+  </div>
+</div>

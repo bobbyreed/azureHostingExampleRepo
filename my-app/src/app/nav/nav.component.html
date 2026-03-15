@@ -1,0 +1,21 @@
+<nav class="nav">
+  <a class="nav-brand" routerLink="/">&#9889; Angular Features</a>
+
+  <div class="nav-links">
+    @for (link of coreLinks; track link.path) {
+      <a [routerLink]="link.path" routerLinkActive="active" class="nav-link">
+        {{ link.label }}
+      </a>
+    }
+  </div>
+
+  <div class="nav-sep">v21</div>
+
+  <div class="nav-links">
+    @for (link of v21Links; track link.path) {
+      <a [routerLink]="link.path" routerLinkActive="active" class="nav-link nav-link-v21">
+        {{ link.label }}
+      </a>
+    }
+  </div>
+</nav>

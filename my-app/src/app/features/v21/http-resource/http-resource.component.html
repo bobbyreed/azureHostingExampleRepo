@@ -1,0 +1,126 @@
+<div class="feature-page">
+  <div class="feature-header" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+    <h1 style="color:#1a202c;">httpResource &amp; resource()</h1>
+    <p style="color:#2d3748;">Angular 20+ — Reactive async data fetching built on Signals</p>
+  </div>
+
+  <div class="feature-section">
+    <h2>About This Feature</h2>
+    <p>
+      <code>httpResource()</code> and <code>resource()</code> replace the
+      <code>subscribe()</code> pattern for data fetching. They expose request state as
+      <strong>Signals</strong> — no manual subscriptions, no <code>takeUntil</code>, no loading booleans.
+    </p>
+    <ul>
+      <li>
+        <strong><code>httpResource(requestFn)</code></strong> — wraps <code>HttpClient</code>.
+        Pass a function returning a URL string or request config; it refetches automatically
+        whenever the signals inside the function change. In-flight requests are cancelled (aborted)
+        when the source signal changes.
+      </li>
+      <li>
+        <strong><code>resource(&#123; request, loader &#125;)</code></strong> — generic version.
+        The <code>loader</code> is any async function (fetch, WebSocket, IndexedDB, etc.).
+        Angular provides an <code>abortSignal</code> to cancel in-flight work.
+      </li>
+      <li>Both expose: <code>.value()</code>, <code>.status()</code>, <code>.isLoading()</code>, <code>.error()</code>, <code>.reload()</code></li>
+    </ul>
+  </div>
+
+  <div class="feature-section">
+    <h2>Code Example</h2>
+    <pre class="code-block">{{ code }}</pre>
+  </div>
+
+  <div class="feature-section">
+    <h2>Live Demo — httpResource()</h2>
+    <div class="demo-box">
+      <p class="text-muted mb-2" style="font-size:0.875rem;">
+        Select a user ID — both user profile and posts refetch automatically (no subscribe):
+      </p>
+      <div class="demo-row">
+        @for (id of [1,2,3,4,5]; track id) {
+          <button class="btn btn-sm" [class.btn-primary]="selectedUserId() === id"
+                  [class.btn-secondary]="selectedUserId() !== id"
+                  (click)="setUser(id)">User {{ id }}</button>
+        }
+        <button class="btn btn-secondary btn-sm" (click)="userResource.reload()">↺ Reload</button>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem;">
+        <!-- User card -->
+        <div style="background:white; border:1px solid var(--border); border-radius:8px; padding:1rem;">
+          <p class="text-primary font-bold mb-1" style="font-size:0.8rem;">userResource</p>
+          @if (userResource.isLoading()) {
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+              <div class="spinner"></div> <span class="text-muted">Loading…</span>
+            </div>
+          } @else if (userResource.error()) {
+            <p class="text-danger">Error: {{ userResource.error() }}</p>
+          } @else if (userResource.value(); as user) {
+            <p class="font-bold">{{ user.name }}</p>
+            <p class="text-muted" style="font-size:0.82rem;">{{ user.email }}</p>
+            <p class="text-muted" style="font-size:0.82rem;">{{ user.phone }}</p>
+            <a [href]="'https://' + user.website" style="font-size:0.82rem; color:var(--primary);">{{ user.website }}</a>
+          }
+          <p class="text-muted mt-1" style="font-size:0.75rem;">
+            status: <code>{{ userResource.status() }}</code>
+          </p>
+        </div>
+
+        <!-- Posts -->
+        <div style="background:white; border:1px solid var(--border); border-radius:8px; padding:1rem;">
+          <p class="text-primary font-bold mb-1" style="font-size:0.8rem;">postsResource (same userId signal)</p>
+          @if (postsResource.isLoading()) {
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+              <div class="spinner"></div> <span class="text-muted">Loading…</span>
+            </div>
+          } @else {
+            <div style="display:flex;flex-direction:column;gap:0.5rem;">
+              @for (post of postsResource.value() ?? []; track post.id) {
+                <div style="font-size:0.8rem; padding:0.4rem 0; border-bottom:1px solid var(--border);">
+                  <strong style="text-transform:capitalize;">{{ post.title | slice:0:40 }}…</strong>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feature-section">
+    <h2>Live Demo — resource() with custom loader</h2>
+    <div class="demo-box">
+      <p class="text-muted mb-2" style="font-size:0.875rem;">
+        <code>resource()</code> uses a raw <code>fetch()</code> call with automatic abort on signal change:
+      </p>
+      <div class="demo-row">
+        <label>Post ID (1–10):
+          <input type="number" min="1" max="10" class="form-control" style="width:90px"
+                 [value]="searchId()" (change)="setCommentPost(+$any($event).target.value)">
+        </label>
+        <button class="btn btn-secondary btn-sm" (click)="commentResource.reload()">↺ Reload</button>
+        <span class="badge" [class.badge-warning]="commentResource.isLoading()"
+                             [class.badge-success]="!commentResource.isLoading()">
+          {{ commentResource.status() }}
+        </span>
+      </div>
+      @if (commentResource.isLoading()) {
+        <div style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;">
+          <div class="spinner"></div> <span class="text-muted">Loading comments…</span>
+        </div>
+      } @else {
+        <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.5rem;">
+          @for (c of commentResource.value() ?? []; track c.id) {
+            <div class="rx-item">
+              <strong style="font-size:0.8rem;">{{ c.name }}</strong>
+              <span class="text-muted" style="font-size:0.75rem;"> — {{ c.email }}</span>
+              <p style="font-size:0.8rem;margin-top:0.25rem;color:var(--text-muted);">{{ c.body | slice:0:80 }}…</p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

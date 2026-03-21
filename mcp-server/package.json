@@ -1,0 +1,14 @@
+{
+  "name": "angular-mcp-demo-server",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Minimal MCP server for the Angular MCP Client demo page",
+  "scripts": {
+    "start": "node index.mjs",
+    "dev": "node --watch index.mjs"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  }
+}

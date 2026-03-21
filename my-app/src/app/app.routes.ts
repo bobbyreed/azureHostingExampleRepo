@@ -62,5 +62,9 @@ export const routes: Routes = [
     path: 'v21/signal-forms',
     loadComponent: () => import('./features/v21/signal-forms/signal-forms.component').then(m => m.SignalFormsComponent)
   },
+  {
+    path: 'v21/mcp-client',
+    loadComponent: () => import('./features/v21/mcp-client/mcp-client.component').then(m => m.McpClientComponent)
+  },
   { path: '**', redirectTo: '' }
 ];

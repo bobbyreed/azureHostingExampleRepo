@@ -25,5 +25,6 @@ export class HomeComponent {
     { path: '/v21/http-resource', icon: '🚀', title: 'httpResource',   desc: 'Reactive HTTP + resource() — no subscribe, no cleanup' },
     { path: '/v21/zoneless',      icon: '🏎️', title: 'Zoneless',       desc: 'No zone.js — signal-driven change detection, default in v21' },
     { path: '/v21/signal-forms',  icon: '📋', title: 'Signal Forms',   desc: 'Experimental form API built on WritableSignal + schema validators' },
+    { path: '/v21/mcp-client',    icon: '🔌', title: 'MCP Client',     desc: 'Connect Angular to an MCP server — discover tools, call them live' },
   ];
 }

@@ -1,0 +1,205 @@
+<div class="feature-page">
+
+  <!-- ── Header ─────────────────────────────────────────────────────────────── -->
+  <div class="feature-header"
+       style="background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); box-shadow: 0 4px 20px rgba(15,52,96,0.4);">
+    <h1 style="color:#e94560; letter-spacing:-0.5px;">MCP Client Integration</h1>
+    <p style="color:rgba(255,255,255,0.8);">
+      Angular 21 + Model Context Protocol &mdash; connect to an MCP server, discover tools, and invoke them live
+    </p>
+  </div>
+
+  <!-- ── About ──────────────────────────────────────────────────────────────── -->
+  <div class="feature-section">
+    <h2>What Is MCP?</h2>
+    <p>
+      The <strong>Model Context Protocol (MCP)</strong> is an open standard that lets AI models
+      discover and call <em>tools</em> exposed by a server &mdash; things like database queries,
+      API calls, or any custom logic. Think of it as a structured handshake between a client
+      (your app) and a capability provider (the MCP server).
+    </p>
+    <ul>
+      <li><strong>Transport:</strong> JSON-RPC&nbsp;2.0 over HTTP POST &mdash; plain requests, no magic.</li>
+      <li><strong>Handshake:</strong> <code>initialize</code> &rarr; <code>notifications/initialized</code> &rarr; <code>tools/list</code></li>
+      <li><strong>Invocation:</strong> <code>tools/call</code> with a tool name and typed arguments</li>
+      <li><strong>Session:</strong> The server issues an <code>Mcp-Session-Id</code> response header; include it in every subsequent request.</li>
+    </ul>
+    <p>
+      This page talks to the <code>mcp-server/</code> Node.js server included in this repo.
+      Start it with <code>npm start</code> from that folder, then click <strong>Connect</strong> below.
+    </p>
+  </div>
+
+  <!-- ── Code ───────────────────────────────────────────────────────────────── -->
+  <div class="feature-section">
+    <h2>Angular Service Pattern</h2>
+    <pre class="code-block">{{ code }}</pre>
+  </div>
+
+  <!-- ── Live Demo ──────────────────────────────────────────────────────────── -->
+  <div class="feature-section">
+    <h2>Live Demo</h2>
+
+    <!-- Server URL + Connect -->
+    <div class="demo-box">
+      <p class="text-muted mb-2" style="font-size:0.875rem;">
+        MCP Server URL (make sure the server is running on port&nbsp;3001):
+      </p>
+      <div class="demo-row" style="flex-wrap:wrap; gap:0.5rem;">
+        <input class="form-control" style="flex:1; min-width:260px;"
+               [(ngModel)]="serverUrl"
+               [disabled]="connected()"
+               placeholder="http://localhost:3001/mcp" />
+        @if (!connected()) {
+          <button class="btn btn-primary" (click)="connect()" [disabled]="loading()">
+            @if (loading()) {
+              <span class="spinner" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:6px;"></span>Connecting&hellip;
+            } @else {
+              Connect
+            }
+          </button>
+        } @else {
+          <button class="btn btn-secondary" (click)="disconnect()">Disconnect</button>
+        }
+      </div>
+
+      <!-- Connection status -->
+      <div style="margin-top:0.75rem; display:flex; align-items:center; gap:0.75rem;">
+        @if (connected()) {
+          <span class="badge badge-success" style="font-size:0.8rem;">&#x2022; Connected</span>
+          <span class="text-muted" style="font-size:0.8rem;">
+            Session:&nbsp;<code>{{ sessionId() }}</code>
+          </span>
+        } @else if (loading()) {
+          <span class="badge badge-warning" style="font-size:0.8rem;">Connecting&hellip;</span>
+        } @else {
+          <span class="badge" style="font-size:0.8rem; background:#e2e8f0; color:#718096;">Not connected</span>
+        }
+      </div>
+    </div>
+
+    <!-- Tool discovery ────────────────────────────────────────────────────── -->
+    @if (connected()) {
+      <div class="demo-box" style="margin-top:1rem;">
+        <p style="font-weight:600; margin-bottom:0.75rem; color:var(--text);">
+          Discovered Tools &mdash; {{ tools().length }} available
+        </p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:0.75rem;">
+          @for (tool of tools(); track tool.name) {
+            <button
+              (click)="selectTool(tool)"
+              [style.border]="selectedTool()?.name === tool.name ? '2px solid #e94560' : '2px solid var(--border)'"
+              [style.background]="selectedTool()?.name === tool.name ? 'rgba(233,69,96,0.06)' : 'white'"
+              style="text-align:left; padding:0.85rem 1rem; border-radius:8px; cursor:pointer; transition: border-color 0.15s, background 0.15s;">
+              <div style="font-weight:600; font-size:0.875rem; color:var(--text); margin-bottom:0.3rem;">
+                {{ tool.name }}
+              </div>
+              <div style="font-size:0.78rem; color:var(--text-muted); line-height:1.4;">
+                {{ tool.description }}
+              </div>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Tool invocation ──────────────────────────────────────────────────── -->
+      @if (selectedTool(); as tool) {
+        <div class="demo-box" style="margin-top:1rem;">
+          <p style="font-weight:600; margin-bottom:0.75rem; color:var(--text);">
+            Invoke: <code style="color:#e94560;">{{ tool.name }}</code>
+          </p>
+
+          @if (hasInputs(tool)) {
+            <div style="display:flex; flex-direction:column; gap:0.6rem; margin-bottom:0.75rem;">
+              @for (prop of toolProperties(tool); track prop.key) {
+                <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+                  <label style="font-size:0.82rem; font-weight:600; color:var(--text); min-width:80px;">
+                    {{ prop.key }}
+                    @if (prop.schema.description) {
+                      <span style="font-weight:400; color:var(--text-muted);"> &mdash; {{ prop.schema.description }}</span>
+                    }
+                  </label>
+                  @if (prop.schema.enum) {
+                    <select class="form-control" style="max-width:180px;" [(ngModel)]="toolInputs[prop.key]">
+                      @for (opt of prop.schema.enum; track opt) {
+                        <option [value]="opt">{{ opt }}</option>
+                      }
+                    </select>
+                  } @else if (prop.schema.type === 'number') {
+                    <input type="number" class="form-control" style="max-width:120px;"
+                           [(ngModel)]="toolInputs[prop.key]" />
+                  } @else {
+                    <input type="text" class="form-control" style="max-width:300px;"
+                           [(ngModel)]="toolInputs[prop.key]"
+                           placeholder="Enter {{ prop.key }}&hellip;" />
+                  }
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="text-muted" style="font-size:0.85rem; margin-bottom:0.75rem;">
+              This tool takes no arguments.
+            </p>
+          }
+
+          <button class="btn btn-primary" (click)="runTool()" [disabled]="loading()">
+            @if (loading()) {
+              <span class="spinner" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:6px;"></span>Running&hellip;
+            } @else {
+              Run tool
+            }
+          </button>
+
+          @if (toolResult() !== null) {
+            <div style="
+              margin-top:0.85rem; padding:0.85rem 1rem;
+              background:#f7fafc; border:1px solid var(--border); border-radius:8px;
+              font-family:'Courier New',monospace; font-size:0.85rem;
+              white-space:pre-wrap; word-break:break-all; color:var(--text);">{{ toolResult() }}</div>
+          }
+        </div>
+      }
+    }
+  </div>
+
+  <!-- ── Message Log ─────────────────────────────────────────────────────────── -->
+  @if (log().length > 0) {
+    <div class="feature-section">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; padding-bottom:0.6rem; border-bottom:2px solid var(--border);">
+        <h2 style="margin:0; padding:0; border:none;">JSON-RPC Message Log</h2>
+        <button class="btn btn-secondary btn-sm" (click)="clearLog()">Clear</button>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:0.6rem; max-height:480px; overflow-y:auto;">
+        @for (entry of log(); track $index) {
+          <div
+            [style.border-left]="
+              entry.direction === 'outgoing' ? '3px solid #667eea' :
+              entry.direction === 'error'    ? '3px solid #f56565' :
+                                               '3px solid #48bb78'"
+            [style.background]="
+              entry.direction === 'outgoing' ? '#f0f4ff' :
+              entry.direction === 'error'    ? '#fff5f5' :
+                                               '#f0fff4'"
+            style="border-radius:6px; padding:0.6rem 0.85rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
+              <span
+                [style.color]="
+                  entry.direction === 'outgoing' ? '#667eea' :
+                  entry.direction === 'error'    ? '#f56565' :
+                                                   '#48bb78'"
+                style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">
+                @if (entry.direction === 'outgoing') { &rarr;&nbsp;OUT }
+                @else if (entry.direction === 'error') { &#x2715;&nbsp;ERR }
+                @else { &larr;&nbsp;IN }
+              </span>
+              <span style="font-size:0.8rem; font-weight:600; color:var(--text);">{{ entry.label }}</span>
+              <span style="font-size:0.72rem; color:var(--text-muted); margin-left:auto;">{{ entry.timestamp }}</span>
+            </div>
+            <pre style="margin:0; font-size:0.75rem; line-height:1.5; font-family:'Courier New',monospace; color:var(--text); white-space:pre-wrap; word-break:break-all;">{{ entry.body | json }}</pre>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+</div>
